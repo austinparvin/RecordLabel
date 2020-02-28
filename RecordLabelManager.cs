@@ -117,5 +117,27 @@ namespace RecordLabel
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
+
+        public void ViewBandBasedOnIsSigned(bool isSigned)
+        {
+            var bands = Db.Bands.Where(b => b.IsSigned == isSigned);
+
+            foreach (var b in bands)
+            {
+                Console.WriteLine("----------------------------------------------------------");
+                Console.WriteLine($"Id:                      {b.Id}");
+                Console.WriteLine($"Name:                    {b.Name}");
+                Console.WriteLine($"Country of Origin:       {b.CountryOfOrigin}");
+                Console.WriteLine($"Number of Members:       {b.NumberOfMembers}");
+                Console.WriteLine($"Website:                 {b.Website}");
+                Console.WriteLine($"IsSigned:                {b.IsSigned}");
+                Console.WriteLine($"PersonOfContact:         {b.PersonOfContact}");
+                Console.WriteLine($"Contact phone number:    {b.ContactPhoneNumber}");
+                Console.WriteLine("----------------------------------------------------------");
+                Console.WriteLine("");
+            }
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+        }
     }
 }

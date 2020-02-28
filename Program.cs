@@ -244,36 +244,15 @@ namespace RecordLabel
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
-        static void ViewBandBasedOnIsSigned(bool isSigned)
-        {
-            var db = new DatabaseContext();
-            var bands = db.Bands.Where(b => b.IsSigned == isSigned);
 
-            foreach (var b in bands)
-            {
-                Console.WriteLine("----------------------------------------------------------");
-                Console.WriteLine($"Id:                      {b.Id}");
-                Console.WriteLine($"Name:                    {b.Name}");
-                Console.WriteLine($"Country of Origin:       {b.CountryOfOrigin}");
-                Console.WriteLine($"Number of Members:       {b.NumberOfMembers}");
-                Console.WriteLine($"Website:                 {b.Website}");
-                Console.WriteLine($"IsSigned:                {b.IsSigned}");
-                Console.WriteLine($"PersonOfContact:         {b.PersonOfContact}");
-                Console.WriteLine($"Contact phone number:    {b.ContactPhoneNumber}");
-                Console.WriteLine("----------------------------------------------------------");
-                Console.WriteLine("");
-            }
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-        }
         static void CreateMenu(string[] args)
         {
             var subMenu = new ConsoleMenu(args, level: 1)
               .Add("View all albums for a band", () => ViewAlbums())
               .Add("View all the albums, ordered by ReleaseDate", () => RLM.ViewAllAlbums())
               .Add("View an Album's songs", () => ViewSongs())
-              .Add("View All bands that are signed", () => ViewBandBasedOnIsSigned(true))
-              .Add("View all bands that are not signed", () => ViewBandBasedOnIsSigned(false))
+              .Add("View All bands that are signed", () => RLM.ViewBandBasedOnIsSigned(true))
+              .Add("View all bands that are not signed", () => RLM.ViewBandBasedOnIsSigned(false))
               .Add("Sub_Close", ConsoleMenu.Close)
               .Add("Sub_Exit", () => Environment.Exit(0))
               .Configure(config =>
