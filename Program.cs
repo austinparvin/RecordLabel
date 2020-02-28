@@ -190,9 +190,6 @@ namespace RecordLabel
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
-
-
-
         static void ViewAlbums()
         {
             RLM.ViewBands();
@@ -219,35 +216,15 @@ namespace RecordLabel
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
-        static void ViewAllAlbums()
-        {
-            var db = new DatabaseContext();
-            var albums = db.Albums.OrderBy(a => a.ReleaseDate);
-            foreach (var a in albums)
-            {
-                Console.WriteLine("----------------------------------------------------------");
-                Console.WriteLine($"Id:                   {a.Id}");
-                Console.WriteLine($"Title:                {a.Title}");
-                Console.WriteLine($"Is it Explicit:       {a.IsExplicit}");
-                Console.WriteLine($"Release Date:         {a.ReleaseDate}");
-                Console.WriteLine("----------------------------------------------------------");
-                Console.WriteLine("");
-            }
-
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-        }
-
 
         static void ViewSongs()
         {
-            ViewAllAlbums();
+            RLM.ViewAllAlbums();
 
-            var db = new DatabaseContext();
             Console.WriteLine("Which Album?");
             int albumId;
             var isInt = int.TryParse(Console.ReadLine(), out albumId);
-            var isInDb = db.Bands.Any(p => p.Id == albumId);
+            var isInDb = RLM.Db.Bands.Any(p => p.Id == albumId);
             while (!isInt || !isInDb)
             {
                 if (!isInt)
@@ -260,21 +237,10 @@ namespace RecordLabel
                 }
 
                 isInt = int.TryParse(Console.ReadLine(), out albumId);
-                isInDb = db.Bands.Any(p => p.Id == albumId);
+                isInDb = RLM.Db.Bands.Any(p => p.Id == albumId);
             }
 
-            var songs = db.Songs.Where(s => s.AlbumId == albumId);
-
-            foreach (var s in songs)
-            {
-                Console.WriteLine("----------------------------------------------------------");
-                Console.WriteLine($"Id:                  {s.Id}");
-                Console.WriteLine($"Title:               {s.Title}");
-                Console.WriteLine($"Lyrics:              {s.Lyrics}");
-                Console.WriteLine($"Song Length:         {s.Length}");
-                Console.WriteLine("----------------------------------------------------------");
-                Console.WriteLine("");
-            }
+            RLM.GetSongsByAlbumId(albumId);
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
@@ -304,7 +270,7 @@ namespace RecordLabel
         {
             var subMenu = new ConsoleMenu(args, level: 1)
               .Add("View all albums for a band", () => ViewAlbums())
-              .Add("View all the albums, ordered by ReleaseDate", () => ViewAllAlbums())
+              .Add("View all the albums, ordered by ReleaseDate", () => RLM.ViewAllAlbums())
               .Add("View an Album's songs", () => ViewSongs())
               .Add("View All bands that are signed", () => ViewBandBasedOnIsSigned(true))
               .Add("View all bands that are not signed", () => ViewBandBasedOnIsSigned(false))
