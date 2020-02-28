@@ -191,14 +191,15 @@ namespace RecordLabel
             Console.ReadKey();
         }
 
+
+
         static void ViewAlbums()
         {
-            var db = new DatabaseContext();
             RLM.ViewBands();
             Console.WriteLine("Which band?");
             int bandId;
             var isInt = int.TryParse(Console.ReadLine(), out bandId);
-            var isInDb = db.Bands.Any(p => p.Id == bandId);
+            var isInDb = RLM.Db.Bands.Any(p => p.Id == bandId);
             while (!isInt || !isInDb)
             {
                 if (!isInt)
@@ -211,21 +212,10 @@ namespace RecordLabel
                 }
 
                 isInt = int.TryParse(Console.ReadLine(), out bandId);
-                isInDb = db.Bands.Any(p => p.Id == bandId);
+                isInDb = RLM.Db.Bands.Any(p => p.Id == bandId);
             }
 
-            var albums = db.Albums.Where(b => b.BandId == bandId);
-
-            foreach (var a in albums)
-            {
-                Console.WriteLine("----------------------------------------------------------");
-                Console.WriteLine($"Id:                   {a.Id}");
-                Console.WriteLine($"Title:                {a.Title}");
-                Console.WriteLine($"Is it Explicit:       {a.IsExplicit}");
-                Console.WriteLine($"Release Date:         {a.ReleaseDate}");
-                Console.WriteLine("----------------------------------------------------------");
-                Console.WriteLine("");
-            }
+            RLM.GetAlbumsByBandId(bandId);
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
