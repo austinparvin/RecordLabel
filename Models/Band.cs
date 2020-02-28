@@ -9,7 +9,7 @@ namespace RecordLabel.Models
         public string CountryOfOrigin { get; set; }
         public int NumberOfMembers { get; set; }
         public string Website { get; set; }
-        public bool IsSigned { get; set; }
+        public bool IsSigned { get; set; } = true;
         public string PersonOfContact { get; set; }
         public string ContactPhoneNumber { get; set; }
 
