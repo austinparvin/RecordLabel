@@ -3,6 +3,7 @@ using RecordLabel.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ConsoleTools;
+using System.Collections.Generic;
 
 namespace RecordLabel
 {
@@ -22,8 +23,6 @@ namespace RecordLabel
         }
         static void AddBand()
         {
-            var db = new DatabaseContext();
-            
             // Ask for Name
             Console.WriteLine("What is the Band name?");
             var name = Console.ReadLine().ToLower();
@@ -73,12 +72,13 @@ namespace RecordLabel
 
         static void IsSigned(bool isSigned)
         {
-            var db = new DatabaseContext();
             RLM.ViewBands();
+
             Console.WriteLine("Which band?");
+
             int bandId;
             var isInt = int.TryParse(Console.ReadLine(), out bandId);
-            var isInDb = db.Bands.Any(p => p.Id == bandId);
+            var isInDb = RLM.Db.Bands.Any(p => p.Id == bandId);
             while (!isInt || !isInDb)
             {
                 if (!isInt)
@@ -91,24 +91,22 @@ namespace RecordLabel
                 }
 
                 isInt = int.TryParse(Console.ReadLine(), out bandId);
-                isInDb = db.Bands.Any(p => p.Id == bandId);
+                isInDb = RLM.Db.Bands.Any(p => p.Id == bandId);
             }
 
-            db.Bands.First(b => b.Id == bandId).IsSigned = isSigned;
-            db.SaveChanges();
+            RLM.IsSignedDbUpdate(isSigned, bandId);
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
         static void AddAlbum()
         {
-            // 1. Pick a Band
-            var db = new DatabaseContext();
+            // 1. Get a Band
             RLM.ViewBands();
             Console.WriteLine("Which band?");
             int bandId;
             var isInt = int.TryParse(Console.ReadLine(), out bandId);
-            var isInDb = db.Bands.Any(p => p.Id == bandId);
+            var isInDb = RLM.Db.Bands.Any(p => p.Id == bandId);
             while (!isInt || !isInDb)
             {
                 if (!isInt)
@@ -121,12 +119,10 @@ namespace RecordLabel
                 }
 
                 isInt = int.TryParse(Console.ReadLine(), out bandId);
-                isInDb = db.Bands.Any(p => p.Id == bandId);
+                isInDb = RLM.Db.Bands.Any(p => p.Id == bandId);
             }
 
-            var band = db.Bands.First(b => b.Id == bandId);
-
-            // 2. Give Album Info
+            // 2. Get Album Info
             // Ask for Name
             Console.WriteLine("What is the title?");
             var title = Console.ReadLine().ToLower();
@@ -151,16 +147,10 @@ namespace RecordLabel
                 isDate = DateTime.TryParse(Console.ReadLine(), out releaseDate);
             }
 
-            // 3. create album object to add
-            var albumToAdd = new Album()
-            {
-                Title = title,
-                IsExplicit = isExplicit,
-                ReleaseDate = releaseDate
-            };
-
+            // 3. Get songs
             Console.WriteLine("Please enter info about songs:");
-            // 4. Ask for songs
+            var songsToAdd = new List<Song>();
+
             while (UserInput != "q")
             {
                 // 1. Ask if we need to add songs to the album
@@ -188,7 +178,7 @@ namespace RecordLabel
                     Length = songLength
                 };
 
-                albumToAdd.Songs.Add(songToAdd);
+                songsToAdd.Add(songToAdd);
 
                 Console.WriteLine("Add a song press enter, 'q' to quit");
                 UserInput = Console.ReadLine();
@@ -196,9 +186,7 @@ namespace RecordLabel
             }
 
             // 5. Add the album
-            band.Albums.Add(albumToAdd);
-            db.SaveChanges();
-
+            RLM.AddAlbumToDB(bandId, title, isExplicit, releaseDate, songsToAdd);
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using RecordLabel.Models;
 
 namespace RecordLabel
@@ -6,9 +8,10 @@ namespace RecordLabel
 
     public class RecordLabelManager
     {
+        public DatabaseContext Db { get; set; } = new DatabaseContext();
         public void AddBandToDb(string name, string countryOfOrigin, int numberOfMembers, string website, bool isSigned, string personOfContact, string contactPhoneNumber)
         {
-            var db = new DatabaseContext();
+
 
             var newBand = new Band()
             {
@@ -21,15 +24,13 @@ namespace RecordLabel
                 ContactPhoneNumber = contactPhoneNumber
             };
 
-            db.Bands.Add(newBand);
-            db.SaveChanges();
+            Db.Bands.Add(newBand);
+            Db.SaveChanges();
         }
 
         public void ViewBands()
         {
-            var db = new DatabaseContext();
-
-            foreach (var b in db.Bands)
+            foreach (var b in Db.Bands)
             {
                 Console.WriteLine("----------------------------------------------------------");
                 Console.WriteLine($"Id:                      {b.Id}");
@@ -45,6 +46,28 @@ namespace RecordLabel
             }
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
+        }
+
+        public void IsSignedDbUpdate(bool isSigned, int bandId)
+        {
+            Db.Bands.First(b => b.Id == bandId).IsSigned = isSigned;
+            Db.SaveChanges();
+
+        }
+        public void AddAlbumToDB(int bandId, string title, bool isExplicit, DateTime releaseDate, List<Song> songsToAdd)
+        {
+            var band = Db.Bands.First(b => b.Id == bandId);
+            var albumToAdd = new Album()
+            {
+                Title = title,
+                IsExplicit = isExplicit,
+                ReleaseDate = releaseDate,
+                Songs = songsToAdd
+            };
+
+            band.Albums.Add(albumToAdd);
+            Db.SaveChanges();
+
         }
     }
 }
