@@ -54,20 +54,37 @@ namespace RecordLabel
             Db.SaveChanges();
 
         }
-        public void AddAlbumToDB(int bandId, string title, bool isExplicit, DateTime releaseDate, List<Song> songsToAdd)
+        public int AddAlbumToDB(int bandId, string title, bool isExplicit, DateTime releaseDate)
         {
             var band = Db.Bands.First(b => b.Id == bandId);
             var albumToAdd = new Album()
             {
                 Title = title,
                 IsExplicit = isExplicit,
-                ReleaseDate = releaseDate,
-                Songs = songsToAdd
+                ReleaseDate = releaseDate
             };
 
             band.Albums.Add(albumToAdd);
             Db.SaveChanges();
 
+            return albumToAdd.Id;
+
+        }
+
+        public int AddSongToDB(int albumId, string songTitle, string songLryics, string songLength)
+        {
+            var album = Db.Albums.First(a => a.Id == albumId);
+            var songToAdd = new Song()
+            {
+                Title = songTitle,
+                Lyrics = songLryics,
+                Length = songLength,
+                // SongGenres = songGenres
+            };
+
+            album.Songs.Add(songToAdd);
+            Db.SaveChanges();
+            return songToAdd.Id;
         }
 
         public void GetAlbumsByBandId(int bandId)

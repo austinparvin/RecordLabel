@@ -11,6 +11,12 @@ namespace RecordLabel
     {
         static public RecordLabelManager RLM { get; set; } = new RecordLabelManager();
         static public string UserInput { get; set; } = "";
+
+        //Methods
+        static void Main(string[] args)
+        {
+            CreateMenu(args);
+        }
         static public void ValidateInput(string x, string y)
         {
             while (UserInput != x && UserInput != y)
@@ -68,7 +74,6 @@ namespace RecordLabel
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
-
 
         static void IsSigned(bool isSigned)
         {
@@ -147,16 +152,17 @@ namespace RecordLabel
                 isDate = DateTime.TryParse(Console.ReadLine(), out releaseDate);
             }
 
-            // 3. Get songs
-            Console.WriteLine("Please enter info about songs:");
-            var songsToAdd = new List<Song>();
 
+            // 3. Add Album to database and return new albumId
+            var albumId = RLM.AddAlbumToDB(bandId, title, isExplicit, releaseDate);
+
+
+
+            Console.WriteLine("Please enter info about songs:");
             while (UserInput != "q")
             {
-                // 1. Ask if we need to add songs to the album
 
-
-                // 2. Get Song Info
+                // 4. Get Song Info
                 // Ask for Name
                 Console.WriteLine("What is the title?");
                 var songTitle = Console.ReadLine().ToLower();
@@ -166,27 +172,83 @@ namespace RecordLabel
                 var songLryics = Console.ReadLine().ToLower();
 
 
-                // Ask for Lyrics
+                // Ask for how long
                 Console.WriteLine("How long is the song?");
                 var songLength = Console.ReadLine().ToLower();
 
-                // 3. Create song object to add
-                var songToAdd = new Song()
-                {
-                    Title = songTitle,
-                    Lyrics = songLryics,
-                    Length = songLength
-                };
+                // 5. Add song to database and return the new song Id
+                var songId = RLM.AddSongToDB(albumId, songTitle, songLryics, songLength);
 
-                songsToAdd.Add(songToAdd);
+
+                Console.WriteLine("Please enter songs genres:");
+
+                // this will be poplated with a key par songid and genreid
+                var songGenres = new List<SongGenre>();
+
+                while (UserInput != "q")
+                {
+
+                    // 6. Get Genre Info
+                    Console.WriteLine("What Genre?");
+                    var genreName = Console.ReadLine().ToLower();
+
+                    // check if the genre exists in the db
+                    if (!RLM.Db.Genres.Any())
+                    {
+                        var newGenre = new Genre()
+                        {
+                            Name = genreName
+                        };
+
+                        RLM.Db.Genres.Add(newGenre);
+                        RLM.Db.SaveChanges();
+                    }
+
+                    var isGenre = RLM.Db.Genres.Any(g => g.Name == genreName);
+
+                    int genreId;
+
+                    // 7. If !isGenre add genre to Genres Table and return new genreId
+                    if (isGenre)
+                    {
+                        genreId = RLM.Db.Genres.First(g => g.Name == genreName).Id;
+                    }
+                    else
+                    {
+                        var newGenre = new Genre()
+                        {
+                            Name = genreName
+                        };
+
+                        RLM.Db.Genres.Add(newGenre);
+                        RLM.Db.SaveChanges();
+                        genreId = RLM.Db.Genres.First(g => g.Name == genreName).Id;
+                    }
+
+                    // 8. create a SongGenre object with the genreId and songId 
+                    var songGenreToAdd = new SongGenre()
+                    {
+                        GenreId = genreId,
+                        SongId = songId
+                    };
+
+                    //9. Add to list
+                    songGenres.Add(songGenreToAdd);
+
+                    Console.WriteLine("Add a genre press enter, 'q' to quit");
+                    UserInput = Console.ReadLine();
+                    ValidateInput("", "q");
+                }
+
+                // 10. Add List of SongGenres to specified song
+                RLM.Db.Songs.First(s => s.Id == songId).SongGenres = songGenres;
+                RLM.Db.SaveChanges();
 
                 Console.WriteLine("Add a song press enter, 'q' to quit");
                 UserInput = Console.ReadLine();
                 ValidateInput("", "q");
             }
 
-            // 5. Add the album
-            RLM.AddAlbumToDB(bandId, title, isExplicit, releaseDate, songsToAdd);
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }
@@ -224,7 +286,7 @@ namespace RecordLabel
             Console.WriteLine("Which Album?");
             int albumId;
             var isInt = int.TryParse(Console.ReadLine(), out albumId);
-            var isInDb = RLM.Db.Bands.Any(p => p.Id == albumId);
+            var isInDb = RLM.Db.Albums.Any(a => a.Id == albumId);
             while (!isInt || !isInDb)
             {
                 if (!isInt)
@@ -284,9 +346,6 @@ namespace RecordLabel
 
             menu.Show();
         }
-        static void Main(string[] args)
-        {
-            CreateMenu(args);
-        }
+
     }
 }

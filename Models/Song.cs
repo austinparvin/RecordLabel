@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace RecordLabel.Models
 {
@@ -9,6 +10,7 @@ namespace RecordLabel.Models
         public string Lyrics { get; set; }
         public string Length { get; set; }
 
+        public List<SongGenre> SongGenres { get; set; }
         // Navigation Properties
         public int AlbumId { get; set; }
         public Album Album { get; set; }

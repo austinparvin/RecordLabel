@@ -10,6 +10,7 @@ namespace RecordLabel.Models
         public DbSet<Band> Bands { get; set; }
         public DbSet<Album> Albums { get; set; }
         public DbSet<Song> Songs { get; set; }
+        public DbSet<Genre> Genres { get; set; }
 
         // Add Database tables here
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -19,6 +20,10 @@ namespace RecordLabel.Models
                 //#error Make sure to update the connection strin gto the correct database
                 optionsBuilder.UseNpgsql("server=localhost;database=RecordLabelDatabase");
             }
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<SongGenre>().HasKey(sg => new { sg.SongId, sg.GenreId });
         }
     }
 }

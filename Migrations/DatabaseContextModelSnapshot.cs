@@ -78,6 +78,21 @@ namespace RecordLabel.Migrations
                     b.ToTable("Bands");
                 });
 
+            modelBuilder.Entity("RecordLabel.Models.Genre", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genres");
+                });
+
             modelBuilder.Entity("RecordLabel.Models.Song", b =>
                 {
                     b.Property<int>("Id")
@@ -104,6 +119,24 @@ namespace RecordLabel.Migrations
                     b.ToTable("Songs");
                 });
 
+            modelBuilder.Entity("RecordLabel.Models.SongGenre", b =>
+                {
+                    b.Property<int>("SongId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GenreId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SongGenreId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("SongId", "GenreId");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("SongGenre");
+                });
+
             modelBuilder.Entity("RecordLabel.Models.Album", b =>
                 {
                     b.HasOne("RecordLabel.Models.Band", "Band")
@@ -118,6 +151,21 @@ namespace RecordLabel.Migrations
                     b.HasOne("RecordLabel.Models.Album", "Album")
                         .WithMany("Songs")
                         .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RecordLabel.Models.SongGenre", b =>
+                {
+                    b.HasOne("RecordLabel.Models.Genre", "Genre")
+                        .WithMany("SongGenres")
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RecordLabel.Models.Song", "Song")
+                        .WithMany("SongGenres")
+                        .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
