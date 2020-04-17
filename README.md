@@ -1,25 +1,67 @@
-# Default Template for SDG .NET Course
+# Objectives
 
-This is the default template for a simple .NET Core console app. This template has:
+- Create a console app that uses an ORM to talk to a database
+- Working with EF Core
+- Reenforce SQL basics
+- One to many relationships
 
-- github integration
+# Includes: 
 
-## To push to github
+- [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)
+- [LINQ](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/)
+- [EF CORE](https://docs.microsoft.com/en-us/ef/core/)
+- [POSTGRESQL](https://www.postgresql.org/)
+- [CONSOLE MENU](https://www.nuget.org/packages/ConsoleMenu-simple/)
+- MVC design pattern
 
-To create and push your current code to github, use the task `create-github`.
+## Featured Code
 
-How?
+### One to many relationship POCO
 
-1. Open your command pallette by using (Mac) `shift + cmd + p` or (Windows) `shift + ctrl + p`
-2. Search and Select `Tasks: Run Task`
-3. Select `create-github` from the dropdown
+```C#
+  public class Album
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public bool IsExplicit { get; set; }
+        public DateTime ReleaseDate { get; set; }
 
-This will create a new github repo, locally and up on github and also push your current code.
+        // Navigation Properties
+        public int BandId { get; set; }
+        public Band Band { get; set; }
 
-## To turn in your assignment:
+        public List<Song> Songs { get; set; } = new List<Song>();
 
-after you have created a github repo, completed your project and pushed your code, follow these instructions: https://suncoast.io/handbook/tools/assignment-turn-in/
+    }
+ ```
+ 
+## User Actions
 
-## PROTIP:
+- Sign a band
+- Produce an album
+- Let go a band
+- Resign a band
+- View all albums for a band
+- View all albums, ordered by ReleaseDate
+- View an Album's songs
+- View All bands that are signed
+- View all bands that are not signed
+- Exit
 
-When you are complete with the project and have turned it in to your instructor, update this read me with details about the assignment.
+## App In Action
+
+### CONSOLE MENU
+![record it](http://g.recordit.co/IQAXEJN0TA.gif)
+
+### SIGN A BAND
+![record it](http://g.recordit.co/AYF7TqzAcO.gif)
+
+### PRODUCE AN ALBUM
+![record it](http://g.recordit.co/g9LVmhZGZP.gif)
+
+### LET GO A BAND & RESIGN A BAND
+![record it](http://g.recordit.co/ZiwszBUqer.gif)
+
+### VIEW
+![record it](http://g.recordit.co/R6CztbO3Ej.gif)
+
