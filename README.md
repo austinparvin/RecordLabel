@@ -17,7 +17,7 @@ A console app that stores our artist information in a database.
 - [EF CORE](https://docs.microsoft.com/en-us/ef/core/)
 - [POSTGRESQL](https://www.postgresql.org/)
 - [CONSOLE MENU](https://www.nuget.org/packages/ConsoleMenu-simple/)
-- MVC design pattern
+- [MVC](https://dotnet.microsoft.com/apps/aspnet/mvc)
 
 ## Featured Code
 
