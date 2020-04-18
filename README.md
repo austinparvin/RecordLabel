@@ -8,6 +8,7 @@ A console app that stores our artist information in a database.
 - Working with EF Core
 - Reenforce SQL basics
 - One to many relationships
+- Integrate 3rd party packages
 
 # Includes: 
 
