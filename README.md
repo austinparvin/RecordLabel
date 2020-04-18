@@ -1,3 +1,7 @@
+# Record Label
+
+A console app that stores our artist information in a database.
+
 # Objectives
 
 - Create a console app that uses an ORM to talk to a database
